@@ -38,6 +38,7 @@ class DatabaseObject{
 		return $object_array;
 	}
 
+	// Count all record listed in the table
 	public static function count_all(){
 		global $database;
 		$sql = "SELECT COUNT(*) FROM ".static::$table_name;
