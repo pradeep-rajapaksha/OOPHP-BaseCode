@@ -1,6 +1,4 @@
-<?php
-include_once("config.php");
-
+<?php 
 /**
 * Database class
 *
@@ -13,91 +11,58 @@ include_once("config.php");
 * @link       http://geewantha.com
 * @since      Class available since Release 1.0.0
 */
-class MySQLDatabase {
-
+class Database{
+	
 	private $connection;
-	private $db_server = "localhost";
-	private $db_user = "root";
-	private $db_pass = "";
-	private $db_name = "lab_oop_photogallery";
 	private $magic_quotes_active;
 	private $real_escape_string_exists;
 
 	public $last_query;
 
-	function __construct() {
+	function __construct()
+	{
 		$this->open_connection();
 		$this->magic_quotes_active = get_magic_quotes_gpc();
 		$this->real_escape_string_exists = function_exists("mysql_real_escape_string");
 	}
 
-	/**
-     * Purpose of the function is to Open the Database Connection
-     *
-     * @return Nothing
-     */
+	// Open Database Connection
 	public function open_connection(){
-		$this->connection = mysql_connect($this->db_server, $this->db_user, $this->db_pass);
+		$this->connection  = mysql_connect(DB_SERVER,DB_USER,DB_PASS);
 		if(!$this->connection){
-			die("Database connection failed: ". mysql_error());
+			die("Database Connection failed! : ".mysql_error());
 		}else{
-			$db_select = mysql_select_db($this->db_name, $this->connection);
+			$db_select = mysql_select_db(DB_NAME, $this->connection);
 			if(!$db_select){
-				die("Database selection failed: ".mysql_error());
+				die("Database Selection failed : ". mysql_error());
 			}
-		}
+		}		
 	}
 
-	/**
-     * Purpose of the function is to Close the Database Connection
-     *
-     * @return Nothing
-     */
+	// Close Database Connection
 	public function close_connection(){
-		if($this->connection){
+		if(isset($this->connection)){
 			mysql_close($this->connection);
 			unset($this->connection);
 		}
 	}
 
-	/**
-     * Purpose of the function execute database query
-     *
-     * @param  String      $sql    sql query string
-     * @return sql query result set
-     */
-	public function query($sql) {
+	// Database Query 
+	public function query($sql){
 		$this->last_query = $sql;
 		$result = mysql_query($sql, $this->connection);
-		$this->confirm_query($result);
+		$this->confirmed_query($result);
 		return $result;
 	}
 
-	private function confirm_query($result){
+	private function confirmed_query($result){
 		if(!$result){
-			$output = "Database Query failed: ".mysql_error()."<br/><br/>";
-			$output .= "Last SQL query : ".$this->last_query;
+			$output = "Database Query Failed : ". mysql_error()."<br/>";
+			// $output .= "Last SQL Query : ". $this->last_query; // comment this on deplyment st
 			die($output);
 		}
 	}
 
-	public function fetch_array($result_set){
-		return mysql_fetch_array($result_set);
-	}
-
-	public function num_rows($result_set){
-		return mysql_num_rows($result_set);
-	}
-
-	public function insert_id(){
-		return mysql_insert_id($this->connection);
-	}
-
-	public function affected_rows(){
-		return mysql_affected_rows($this->connection);
-	}
-
-	// Perpare values before submitting to SQL
 	public function scape_value($value){
 		if($this->real_escape_string_exists){ // PHP v4.3.0 or higher
 			if($this->magic_quotes_active){$value = stripslashes($value);}
@@ -107,7 +72,25 @@ class MySQLDatabase {
 		}
 		return $value;
 	}
+
+	public function fetch_array($result_set){
+		return mysql_fetch_array($result_set);
+	}
+
+	// return number of rows in a result set
+	public function num_rows($result_set){
+		return mysql_num_rows($result_set);
+	}
+
+	// return last inserted ID
+	public function insert_id(){
+		return mysql_insert_id($this->connection);
+	}
+
+	// retun number of rows effected in last query
+	public function affected_rows(){
+		return mysql_affected_rows($this->connection);
+	}
 }
 
-$database = new MySQLDatabase();
-?>
+$database = new Database();

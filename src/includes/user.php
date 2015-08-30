@@ -1,6 +1,4 @@
 <?php
-require_once('database.php');
-
 /**
 * User class
 *
@@ -12,18 +10,16 @@ require_once('database.php');
 * @link       http://geewantha.com
 * @since      Class available since Release 1.0.0
 */
-class User extends DatabaseObject {
+class User extends Databaseobject{
+
 	protected static $table_name = "tbl_users";
-	protected static $db_feilds = array('id','username','password','firstname','lastname','created','modified');
+	protected static $db_fields = array('id', 'username', 'password', 'firstname', 'lastname' );
+
 	public $id;
 	public $username;
 	public $password;
 	public $firstname;
 	public $lastname;
-	public $created;
-	public $modified;
-
-	private $temp_path;
 
 	public function fullname() 	{
  		if(isset($this->firstname) && isset($this->lastname)){
@@ -33,31 +29,17 @@ class User extends DatabaseObject {
  		}
  	}
 
- 	public static function authenticate($username="", $password="") {
+ 	public static function authanticate($username="", $password=""){
  		global $database;
  		$username = $database->scape_value($username);
  		$password = $database->scape_value($password);
 
- 		$sql  = "SELECT * FROM  ".self::$table_name;
- 		$sql .= " WHERE username = '{$username}' ";
- 		$sql .= " AND password = '{$password}' ";
- 		$sql .= " LIMIT 1";
+ 		$sql = "SELECT * FROM tbl_users ";
+ 		$sql .="WHERE username = '{$username}' ";
+ 		$sql .="AND password = '{$password}' ";
+ 		$sql .="LIMIT 1";
 
  		$result_array = self::find_by_sql($sql);
- 		return !empty($result_array)?array_shift($result_array):false;
+ 		return !empty($result_array) ? array_shift($result_array) : false;
  	}
-
- 	// public function delete()
- 	// {
- 	// 	global $database;
- 	// 	$sql  = "DELETE FROM tbl_users ";
- 	// 	$sql .= "WHERE id=".$database->scape_value($this->id);
- 	// 	$sql .= " LIMIT 1";
-
- 	// 	$database->query($sql);
- 	// 	return $database->affected_rows()===1 ? true : false;
- 	// }
-
- 	
-    
 }

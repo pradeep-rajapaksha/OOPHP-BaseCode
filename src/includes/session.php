@@ -12,56 +12,46 @@
 * @since      Class available since Release 1.0.0
 */
 class Session {
-	
-	public $user_id = false;
-	private $logged_in;
-	public $message; 
 
-	function __construct() 
-	{
+	private $logged_in = false;
+
+	public $user_id;
+	public $message;
+
+	function __construct(){
 		session_start();
 		$this->check_message();
-		$this->check_login(); 
-		if($this->logged_in){
-			// action to take right away if user logged in
-		} else {
-			// action to take right away if user not logged in
-		}
+		$this->check_login();
 	}
 
-	// function to check is user logged in
-	public function is_logged_in()	
-	{
+	public function is_logged_in(){
 		return $this->logged_in;
 	}
 
 	public function login($user){
-		// database should find user based on username / password
 		if($user){
 			$this->user_id = $_SESSION['user_id'] = $user->id;
 			$this->logged_in = true;
 		}
 	}
 
-	// logout function
-	public function loggout()
-	{
-		unset($_SESSION['user_id']);
+	public function logout(){
 		unset($this->user_id);
+		unset($_SESSION['user_id']);
 		$this->logged_in = false;
 	}
 
-	public function message($msg="")
-	{
+	public function message($msg=""){
 		if(!empty($msg)){
+			// Set message
 			$_SESSION['message'] = $msg;
-		} else {
+		}else{
+			// get message
 			return $this->message;
 		}
 	}
 
-	private function check_login()	
-	{
+	private function check_login(){
 		if(isset($_SESSION['user_id'])){
 			$this->user_id = $_SESSION['user_id'];
 			$this->logged_in = true;
@@ -71,17 +61,15 @@ class Session {
 		}
 	}
 
-	private function check_message()
-	{
+	private function check_message(){
+		// if there a message stored in the session
 		if(isset($_SESSION['message'])){
 			$this->message = $_SESSION['message'];
 			unset($_SESSION['message']);
-		} else {
+		}else{
 			$this->message = "";
 		}
 	}
-
-
 }
 
 $session = new Session();
