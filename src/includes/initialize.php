@@ -19,6 +19,4 @@ require_once(LIB_PATH."pagination.php");
 
 // load database related classes
 require_once(LIB_PATH."user.php");
-require_once(LIB_PATH."photograph.php");
-require_once(LIB_PATH."comment.php");
 ?>
